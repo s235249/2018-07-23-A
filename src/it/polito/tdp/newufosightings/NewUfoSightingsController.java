@@ -5,6 +5,7 @@
 package it.polito.tdp.newufosightings;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.newufosightings.model.Model;
@@ -51,12 +52,43 @@ public class NewUfoSightingsController {
 
 	@FXML
 	void doCreaGrafo(ActionEvent event) {
-
+		
+		String shape= cmbBoxForma.getValue();
+		String ris= model.creaGrafo(shape);
+		txtResult.appendText(ris);
 	}
 
 	@FXML
 	void doSelezionaAnno(ActionEvent event) {
-
+		txtResult.clear();
+		
+		String annos= txtAnno.getText();
+		
+		if(annos==null)
+		{
+			txtResult.appendText("ERRORE: inserire un anno \n");
+			return;
+		}
+		else {
+		int anno = 0;
+		try {
+		anno= Integer.parseInt(annos);
+		}catch(NumberFormatException e) { txtResult.appendText("ERRORE: inserire un anno in numeri\n");
+		return;}
+		
+		if (anno<1910 || anno>2014)
+		{
+			txtResult.appendText("ERRORE: l'anno inserito non ha documentazione\n");
+			return;
+		}
+		
+		List<String> shapes= model.formeAnno(anno);
+		
+		if (shapes.size()==0) 
+		{
+			txtResult.appendText("ERRORE: non ci sono avvistamenti per l'anno selezionato\n");
+		}
+		cmbBoxForma.getItems().addAll(shapes); }
 	}
 
 	@FXML
@@ -79,6 +111,7 @@ public class NewUfoSightingsController {
 
 	public void setModel(Model model) {
 		this.model = model;
+		txtAnno.setText(null);
 
 	}
 }
